@@ -1,7 +1,5 @@
 package com.sameen.blog.blogappapi.s.exceptions;
-
 import lombok.*;
-
 @Data
 @NoArgsConstructor
 public class ResourceNotFoundException extends RuntimeException {

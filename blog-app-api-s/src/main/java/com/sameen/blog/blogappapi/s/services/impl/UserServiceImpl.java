@@ -5,6 +5,7 @@ import com.sameen.blog.blogappapi.s.exceptions.ResourceNotFoundException;
 import com.sameen.blog.blogappapi.s.payloads.UserDto;
 import com.sameen.blog.blogappapi.s.repositories.UserRepo;
 import com.sameen.blog.blogappapi.s.services.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.internal.bytebuddy.matcher.StringMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepo userRepo;
@@ -23,6 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
 //  We have to save the user object in userRepo so we created the dtoToUser and userToDto
+        log.info("==> ServiceImpl :: Inside createUser() <==");
         User user = this.dtoToUser(userDto);
         User savedUser = this.userRepo.save(user); // saving the user into User entity
 
@@ -30,7 +33,9 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public UserDto updateUser(UserDto userDto, Integer userId) {
-         User user = this.userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User", "id", userId));
+        log.info("==> ServiceImpl :: Inside updateUser() <==");
+
+        User user = this.userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User", "id", userId));
 
          user.setName(userDto.getName());
          user.setEmail(userDto.getEmail());
@@ -45,12 +50,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Integer userId) {
+        log.info("==> ServiceImpl :: Inside getUserById() <==");
+
         User user = this.userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User", "Id",userId));
         return this.userToDto(user);
     }
 
     @Override
     public List<UserDto> getAllUser() {
+        log.info("==> ServiceImpl :: Inside getAllUser() <==");
+
         List<User> users = this.userRepo.findAll();
         List<UserDto> userDtoList = users.stream().map(user -> this.userToDto(user)).collect(Collectors.toList());
         return userDtoList;
@@ -58,6 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Integer userId) {
+        log.info("==> ServiceImpl :: Inside deleteUser() <==");
 
         User user = this.userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User", "Id", userId));
         this.userRepo.delete(user);
