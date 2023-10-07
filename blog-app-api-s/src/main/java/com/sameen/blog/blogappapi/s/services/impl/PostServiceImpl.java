@@ -10,9 +10,11 @@ import com.sameen.blog.blogappapi.s.repositories.PostRepo;
 import com.sameen.blog.blogappapi.s.repositories.UserRepo;
 import com.sameen.blog.blogappapi.s.services.PostService;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.event.spi.PostDeleteEvent;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -51,7 +53,6 @@ public class PostServiceImpl implements PostService {
        return this.modelMapper.map(newPost, PostDto.class);
 
     }
-
     @Override
     public Post updatePost(PostDto postDto) {
         log.info("==> ServiceImpl :: Inside updatePost() <==");
@@ -66,17 +67,23 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getAllPost() {
-        log.info("==> ServiceImpl :: Inside getAllPost() <==");
+    public List<PostDto> getAllPost(Integer pageNumber, Integer pageSize) {
+    log.info("==> ServiceImpl :: Inside getAllPost() <==");
 
-        return null;
+    Pageable p = PageRequest.of(pageNumber, pageSize);
+
+    Page<Post> pagePost = this.postRepo.findAll(p);
+    List<Post> allPosts = pagePost.getContent();
+    List<PostDto> postDtos = allPosts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+    return postDtos;
     }
 
     @Override
-    public Post getPostById(Integer postId) {
+    public PostDto getPostById(Integer postId) {
         log.info("==> ServiceImpl :: Inside getPostById() <==");
 
-        return null;
+        Post post = this.postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException("post" , "post id", postId));
+        return this.modelMapper.map(post, PostDto.class);
     }
 
     @Override
