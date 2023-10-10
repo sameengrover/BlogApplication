@@ -5,6 +5,7 @@ import com.sameen.blog.blogappapi.s.entities.Post;
 import com.sameen.blog.blogappapi.s.entities.User;
 import com.sameen.blog.blogappapi.s.exceptions.ResourceNotFoundException;
 import com.sameen.blog.blogappapi.s.payloads.PostDto;
+import com.sameen.blog.blogappapi.s.payloads.PostResponse;
 import com.sameen.blog.blogappapi.s.repositories.CategoryRepo;
 import com.sameen.blog.blogappapi.s.repositories.PostRepo;
 import com.sameen.blog.blogappapi.s.repositories.UserRepo;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -33,6 +35,8 @@ public class PostServiceImpl implements PostService {
     UserRepo userRepo;
     @Autowired
     CategoryRepo categoryRepo;
+//    @Autowired
+//    PostResponse postResponse;
     @Override
 
     public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId) {
@@ -67,15 +71,31 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPost(Integer pageNumber, Integer pageSize) {
+    public PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
     log.info("==> ServiceImpl :: Inside getAllPost() <==");
 
-    Pageable p = PageRequest.of(pageNumber, pageSize);
+    Sort sort = null;
+        if (sortDir.equalsIgnoreCase("asc")) {
+            sort= Sort.by(sortBy).ascending();
+        }
+        else{
+            sort = Sort.by(sortBy).descending();
+        }
+
+    Pageable p = PageRequest.of(pageNumber, pageSize,sort);
 
     Page<Post> pagePost = this.postRepo.findAll(p);
     List<Post> allPosts = pagePost.getContent();
     List<PostDto> postDtos = allPosts.stream().map((post) -> this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
-    return postDtos;
+
+    PostResponse postResponse = new PostResponse();
+    postResponse.setContent(postDtos);
+    postResponse.setPageNumber(pagePost.getNumber());
+    postResponse.setPageSize(pagePost.getSize());
+    postResponse.setTotalPages(pagePost.getTotalPages());
+    postResponse.setLastPage(pagePost.isLast());
+
+    return postResponse;
     }
 
     @Override
@@ -108,9 +128,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> searchPosts(String keyword) {
+    public List<PostDto> searchPosts(String keyword) {
         log.info("==> ServiceImpl :: Inside searchPosts() <==");
+        List<Post> postList = this.postRepo.findByTitleContaining(keyword);
+        List<PostDto> postDtos = postList.stream().map((posts)-> new ModelMapper().map(posts, PostDto.class)).collect(Collectors.toList());
 
-        return null;
+        return postDtos;
     }
 }

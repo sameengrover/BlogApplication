@@ -1,5 +1,6 @@
 package com.sameen.blog.blogappapi.s;
 
+import com.sameen.blog.blogappapi.s.payloads.PostResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,5 +16,6 @@ public class BlogApplication {
 	public ModelMapper modelMapper(){
 		return new ModelMapper();
 	}
+
 
 }
