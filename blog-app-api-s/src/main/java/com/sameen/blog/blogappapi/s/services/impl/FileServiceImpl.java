@@ -9,18 +9,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 @Service
 @Slf4j
-public class FileServiceImpl implements FileService{
+public class FileServiceImpl implements FileService {
     @Autowired
     FileUploadProperties fileUploadProperties;
 
     @Override
-    public boolean uploadFile( MultipartFile file) {
-        try {
+    public String uploadPostImage(String path, MultipartFile file) throws IOException {
             log.info("==> FileServiceImpl :: Inside uploadFile() <==");
             String uploadDir = fileUploadProperties.getDir();
+
+            String randomID = UUID.randomUUID().toString();
+            String fileName1 = randomID.concat(uploadDir.substring(uploadDir.lastIndexOf(".")));
 
             File f = new File(uploadDir);
 
@@ -28,13 +33,12 @@ public class FileServiceImpl implements FileService{
                 f.mkdirs();
             }
 
-            String filePath = uploadDir + File.separator + file.getOriginalFilename();
-            file.transferTo(new File(filePath));
+            String filePath = uploadDir + File.separator + fileName1;
+//            file.transferTo(new File(filePath));
 
-            return true;
-    }catch (IOException e) {
-        e.printStackTrace();
-        return false;
+            Files.copy(file.getInputStream(), Paths.get(filePath));
+
+            return fileName1;
+
         }
     }
-}

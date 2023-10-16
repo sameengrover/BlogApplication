@@ -61,7 +61,6 @@ public class PostController {
         return new ResponseEntity<PostResponse>(postResponse, HttpStatus.OK);
         }
    @GetMapping("/posts/{postId}")
-
         public ResponseEntity<PostDto> getSinglePostById(@PathVariable Integer postId){
         log.info("==> PostController :: Inside getSinglePostById <==");
 
