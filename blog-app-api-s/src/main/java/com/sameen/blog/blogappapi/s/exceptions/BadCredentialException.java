@@ -16,12 +16,12 @@ import java.util.Map;
 @RestControllerAdvice
 public class BadCredentialException {
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse> resourceNotFoundExceptionHandler(ResourceNotFoundException ex){
+    public ResponseEntity<ApiResponse> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
         String message = ex.getMessage();
         ApiResponse apiResponse = new ApiResponse(message, false);
         return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.NOT_FOUND);
     }
-
+    
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex){
         Map<String, String> resp = new HashMap<>();
@@ -41,4 +41,11 @@ public class BadCredentialException {
         ApiResponse apiResponse = new ApiResponse(message, false);
         return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.BAD_REQUEST);
     }
+//    @ExceptionHandler(GlobalExceptionHandler.class)
+//    public ResponseEntity<ApiResponse> forbiddenHandler(GlobalExceptionHandler ex){
+//        String message = ex.getMessage();
+//        ApiResponse apiResponse = new ApiResponse(message,false);
+//        return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.FORBIDDEN);
+//    }
+
 }

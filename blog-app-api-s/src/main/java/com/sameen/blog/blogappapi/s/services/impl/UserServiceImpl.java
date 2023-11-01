@@ -1,8 +1,11 @@
 package com.sameen.blog.blogappapi.s.services.impl;
 
+import com.sameen.blog.blogappapi.s.config.AppConstants;
+import com.sameen.blog.blogappapi.s.entities.Role;
 import com.sameen.blog.blogappapi.s.entities.User;
 import com.sameen.blog.blogappapi.s.exceptions.ResourceNotFoundException;
 import com.sameen.blog.blogappapi.s.payloads.UserDto;
+import com.sameen.blog.blogappapi.s.repositories.RoleRepo;
 import com.sameen.blog.blogappapi.s.repositories.UserRepo;
 import com.sameen.blog.blogappapi.s.services.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +13,8 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.internal.bytebuddy.matcher.StringMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,16 +25,14 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepo userRepo;
-    @Autowired
-    private ModelMapper modelMapper;
     @Override
-    public UserDto createUser(UserDto userDto) {
-//  We have to save the user object in userRepo so we created the dtoToUser and userToDto
+    public UserDto createUser(UserDto userDto){
+//  We have to save the user object in userRepo, we created the dtoToUser and userToDto
         log.info("==> ServiceImpl :: Inside createUser() <==");
         User user = this.dtoToUser(userDto);
         User savedUser = this.userRepo.save(user); // saving the user into User entity
 
-           return this.userToDto(savedUser);
+        return this.userToDto(savedUser);
     }
     @Override
     public UserDto updateUser(UserDto userDto, Integer userId) {

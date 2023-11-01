@@ -1,6 +1,8 @@
 package com.sameen.blog.blogappapi.s.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,11 +27,13 @@ public class User implements UserDetails {
     private String name;
 
     private String email;
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String about;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
+    @JsonManagedReference
     private List<Post> postList = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

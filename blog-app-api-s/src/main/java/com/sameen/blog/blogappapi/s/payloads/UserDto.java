@@ -1,10 +1,16 @@
 package com.sameen.blog.blogappapi.s.payloads;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sameen.blog.blogappapi.s.entities.Role;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import org.springframework.validation.annotation.Validated;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @NoArgsConstructor
 @Data
@@ -21,9 +27,13 @@ public class UserDto {
 
     @NotEmpty
     @Size(min =3, max =10, message = "Password must be of atleast 3 chars and not more than 10 chars")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 //    @Pattern(regexp = )    --> get pswrd pattern from google and paste here to set the password
     private String password;
 
     @NotEmpty(message = "About can't be Empty")
     private String about;
+
+    private Set<RoleDto> roles = new HashSet<>();
+
 }

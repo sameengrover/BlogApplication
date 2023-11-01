@@ -1,5 +1,6 @@
 package com.sameen.blog.blogappapi.s.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -33,6 +34,7 @@ public class Post {
 
     @ManyToOne
     @JsonIgnore
+    @JsonBackReference
     private User user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)

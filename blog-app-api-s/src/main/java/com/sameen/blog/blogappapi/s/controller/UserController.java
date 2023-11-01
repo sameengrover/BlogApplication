@@ -3,11 +3,14 @@ package com.sameen.blog.blogappapi.s.controller;
 import com.sameen.blog.blogappapi.s.payloads.ApiResponse;
 import com.sameen.blog.blogappapi.s.payloads.UserDto;
 import com.sameen.blog.blogappapi.s.services.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 @Slf4j
+//@SecurityRequirement(name = "sameen")
 public class UserController {
     @Autowired
     UserService userService;
@@ -34,6 +38,7 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
     @DeleteMapping("/deleteUser/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") Integer userId) {
         log.info("==> UserController :: deleteUser() <==");
 
@@ -53,4 +58,6 @@ public class UserController {
 
           return ResponseEntity.ok(this.userService.getAllUser());
       }
+
+
     }
